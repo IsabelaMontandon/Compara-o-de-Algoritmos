@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void selectionSort(int arr[], int size) {
+    int i, j, temp, min_index;
+
+    for (i = 0; i < size - 1; i++) {
+        min_index = i;
+
+        for (j = i + 1; j < size; j++) {
+            if (arr[j] < arr[min_index]) {
+                min_index = j;
+            }
+        }
+
+        temp = arr[i];
+        arr[i] = arr[min_index];
+        arr[min_index] = temp;
+    }
+}
+
+int main() {
+    const int base_size = 50000;
+    int scale, exec, element, num_executions = 3, num_scales = 8;
+    int *arr;
+    clock_t start_time, end_time;
+    double elapsed_time = 0, average_time = 0;
+
+    srand(time(NULL));
+
+    for (scale = 1; scale <= num_scales; scale++) {
+        int current_size = base_size * scale;
+        arr = (int*)malloc(current_size * sizeof(int));
+        if (arr == NULL) {
+            printf("Erro de alocação de memória!\n");
+            return 1;
+        }
+
+        printf("Tamanho do vetor: %d\n\n", current_size);
+
+        average_time = 0;  // Reiniciar o tempo médio a cada novo tamanho de vetor
+
+        for (exec = 0; exec < num_executions; exec++) {
+            // Inicializar o vetor com valores aleatórios
+            for (element = 0; element < current_size; element++) {
+                arr[element] = rand() % 101;
+            }
+
+            start_time = clock();
+
+            selectionSort(arr, current_size);
+
+            end_time = clock();
+
+            elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+            average_time += elapsed_time;
+
+            printf("Tempo execução %d: %f segundos\n", exec + 1, elapsed_time);
+        }
+
+        average_time /= num_executions;
+
+        printf("Tempo médio: %f segundos\n\n", average_time);
+
+        free(arr);  // Liberar a memória alocada
+    }
+
+    return 0;
+}
