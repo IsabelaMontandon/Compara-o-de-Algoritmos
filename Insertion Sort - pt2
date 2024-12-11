@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void ordenarPorInsercao(int dados[], int tamanhoDados) {
+    int i, j, chave, indiceMenor;
+
+    for (i = 0; i < tamanhoDados - 1; i++) {
+        indiceMenor = i;
+
+        for (j = i + 1; j < tamanhoDados; j++) {
+            if (dados[j] < dados[indiceMenor]) {
+                indiceMenor = j;
+            }
+        }
+
+        chave = dados[i];
+        dados[i] = dados[indiceMenor];
+        dados[indiceMenor] = chave;
+    }
+}
+
+int main() {
+    const int tamanhoBase = 20000;
+    int contador1, contador2, contador3, execucoes = 3, tentativas = 20;
+    int dados[tamanhoBase * tentativas];
+    clock_t inicio, fim;
+    double tempoExecucao = 0, tempoMedio = 0;
+
+    srand(time(NULL));
+
+    for (contador1 = 1; contador1 <= tentativas; contador1++) {
+        printf("Tamanho do vetor: %d\n\n", (tamanhoBase * contador1));
+        tempoMedio = 0;
+
+        for (contador2 = 0; contador2 < execucoes; contador2++) {
+            for (contador3 = 0; contador3 < (tamanhoBase * contador1); contador3++) {
+                dados[contador3] = rand() % 101;
+            }
+
+            inicio = clock();
+
+            ordenarPorInsercao(dados, (tamanhoBase * contador1));
+
+            fim = clock();
+
+            tempoExecucao = (double)(fim - inicio) / CLOCKS_PER_SEC;
+            tempoMedio += tempoExecucao;
+
+            printf("Tempo execução %d: %f\n", contador2 + 1, tempoExecucao);
+        }
+
+        tempoMedio /= execucoes;
+
+        printf("\nTempo médio: %f\n\n", tempoMedio);
+    }
+}
