@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int particionaVetor(int inicio, int fim, int vetor[]) {
+    int pivo, indiceMenor, indice, temp;
+
+    pivo = vetor[fim];
+    indiceMenor = inicio;
+
+    for (indice = inicio; indice < fim; indice++) {
+        if (vetor[indice] <= pivo) {
+            temp = vetor[indiceMenor];
+            vetor[indiceMenor] = vetor[indice];
+            vetor[indice] = temp;
+
+            indiceMenor++;
+        }
+    }
+
+    vetor[fim] = vetor[indiceMenor];
+    vetor[indiceMenor] = pivo;
+
+    return indiceMenor;
+}
+
+void quickSort(int inicio, int fim, int vetor[]) {
+    int meio;
+
+    if (inicio < fim) {
+        meio = particionaVetor(inicio, fim, vetor);
+
+        quickSort(inicio, meio - 1, vetor);
+        quickSort(meio + 1, fim, vetor);
+    }
+}
+
+int main() {
+    const int tamanhoBase = 20000;
+    int i, j, k, numExecucoes = 3, numTestes = 20;
+    int vetor[tamanhoBase * numTestes];
+    clock_t tempoInicial, tempoFinal;
+    double tempoTotal = 0, tempoMedio = 0;
+
+    srand(time(NULL));
+
+    for (i = 1; i <= numTestes; i++) {
+        printf("Tamanho do vetor: %d\n\n", (tamanhoBase * i));
+        tempoMedio = 0;
+
+        for (j = 0; j < numExecucoes; j++) {
+            for (k = 0; k < (tamanhoBase * i); k++) {
+                vetor[k] = rand() % 101;
+            }
+
+            tempoInicial = clock();
+
+            quickSort(0, (tamanhoBase * i), vetor);
+
+            tempoFinal = clock();
+
+            tempoTotal = (double)(tempoFinal - tempoInicial) / CLOCKS_PER_SEC;
+            tempoMedio += tempoTotal;
+
+            printf("Tempo execução %d: %f\n", j + 1, tempoTotal);
+        }
+
+        tempoMedio /= numExecucoes;
+
+        printf("\nTempo médio: %f\n\n", tempoMedio);
+    }
+}
